@@ -3,21 +3,48 @@
 #include <cassert>
 
 using namespace DirectX;
-
+//コンストラクタ
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+//デストラクタ
+GameScene::~GameScene() {
 
+	delete spriteBG_; //BG
+	delete modelStage_; //ステージ
+
+
+}
+
+//初期化
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+
+	//BG(2Dスプライト)
+	textureHandleBG_ = TextureManager::Load("bg.jpg");
+	spriteBG_ = Sprite::Create(textureHandleBG_, {0, 0});
+
+	//ビュープロジェクションの初期化
+	viewProjection_.eye = {0, 1, -6};
+	viewProjection_.target = {0, 1, 0};
+	viewProjection_.Initialize();
+
+	//ステージ
+	textureHandleStage_ = TextureManager::Load("stage.jpg");
+	modelStage_ = Model::Create();
+	worldTransformStage_.translation_ = {0, -1.5f, 0};
+	worldTransformStage_.scale_ = {4.5f, 1, 40};
+	worldTransformStage_.Initialize();
+
 }
 
+//更新
 void GameScene::Update() {}
 
+//表示
 void GameScene::Draw() {
 
 	// コマンドリストの取得
@@ -29,6 +56,8 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
+	//背景
+	spriteBG_->Draw();
 	/// </summary>
 
 	// スプライト描画後処理
@@ -43,6 +72,8 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
+	// ステージ
+	modelStage_->Draw(worldTransformStage_, viewProjection_, textureHandleStage_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
