@@ -11,7 +11,7 @@ GameScene::~GameScene() {
 
 	delete spriteBG_; //BG
 	delete modelStage_; //ステージ
-
+	delete modelPlayer_; //プレイヤー
 
 }
 
@@ -39,10 +39,39 @@ void GameScene::Initialize() {
 	worldTransformStage_.scale_ = {4.5f, 1, 40};
 	worldTransformStage_.Initialize();
 
+	//プレイヤー
+	textureHandlePlayer_ = TextureManager::Load("player.png");
+	modelPlayer_ = Model::Create();
+	worldTransformPlayer_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformPlayer_.Initialize();
+
+
+
 }
 
 //更新
-void GameScene::Update() {}
+void GameScene::Update() {
+
+	PlayerUpdate();
+
+}
+void GameScene::PlayerUpdate() {
+	//移動
+
+	//右へ移動
+	if (input_->PushKey(DIK_RIGHT)) {
+		worldTransformPlayer_.translation_.x += 0.1f;	
+	}
+
+	//左へ移動
+	if (input_->PushKey(DIK_LEFT)) {
+		worldTransformPlayer_.translation_.x -= 0.1f;
+	}
+	
+
+	//行列更新
+	worldTransformPlayer_.UpdateMatrix();
+}
 
 //表示
 void GameScene::Draw() {
@@ -72,8 +101,13 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
+	
 	// ステージ
 	modelStage_->Draw(worldTransformStage_, viewProjection_, textureHandleStage_);
+
+	//プレイヤー
+	modelPlayer_->Draw(worldTransformPlayer_, viewProjection_, textureHandlePlayer_);
+
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
